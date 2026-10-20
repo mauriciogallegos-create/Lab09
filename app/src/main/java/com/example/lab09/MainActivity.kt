@@ -12,6 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.lab09.ui.theme.Lab09Theme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
@@ -113,5 +119,32 @@ fun BarraInferior(navController: NavHostController) {
             selected = navController.currentDestination?.route == "posts",
             onClick = { navController.navigate("posts") }
         )
+    }
+}
+
+// 5.3.2
+@Composable
+fun Contenido(
+    pv: PaddingValues,
+    navController: NavHostController,
+    servicio: PostApiService
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(pv)
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = "inicio" // Ruta de inicio
+        ) {
+            composable("inicio") { ScreenInicio() }
+            composable("posts") { ScreenPosts(navController, servicio) }
+            composable("postsVer/{id}", arguments = listOf(
+                navArgument("id") { type = NavType.IntType })
+            ) {
+                ScreenPost(navController, servicio, it.arguments!!.getInt("id"))
+            }
+        }
     }
 }
