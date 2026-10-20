@@ -12,6 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.lab09.ui.theme.Lab09Theme
+import androidx.navigation.compose.rememberNavController
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,4 +47,19 @@ fun GreetingPreview() {
     Lab09Theme {
         Greeting("Android")
     }
+}
+
+// 5.1.2 y 5.2.1
+@Composable
+fun ProgPrincipal9() {
+    val urlBase = "https://json-placeholder.mock.beeceptor.com/"
+    val retrofit = Retrofit.Builder().baseUrl(urlBase)
+        .addConverterFactory(GsonConverterFactory.create()).build()
+    val navController = rememberNavController()
+
+    Scaffold(
+        topBar = { BarraSuperior() },
+        bottomBar = { BarraInferior(navController) },
+        content = { paddingValues -> Contenido(paddingValues, navController, servicio) }
+    )
 }
