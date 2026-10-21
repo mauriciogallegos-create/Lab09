@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.compose.rememberNavController
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import androidx.compose.material.icons.outlined.Star
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,9 +115,14 @@ fun BarraInferior(navController: NavHostController) {
             selected = navController.currentDestination?.route == "posts",
             onClick = { navController.navigate("posts") }
         )
+        NavigationBarItem(
+            icon = { Icon(Icons.Outlined.Star, contentDescription = "Pokédex") },
+            label = { Text("Pokédex") },
+            selected = navController.currentDestination?.route == "pokedex",
+            onClick = { navController.navigate("pokedex") }
+        )
     }
 }
-
 // 5.3.2
 @Composable
 fun Contenido(
