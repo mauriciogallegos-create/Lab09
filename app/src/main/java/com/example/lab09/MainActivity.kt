@@ -141,6 +141,7 @@ fun Contenido(
         ) {
             composable("inicio") { ScreenInicio() }
             composable("posts") { ScreenPosts(navController, servicio) }
+            composable("pokedex") { ScreenPokedex(onPokemonClick = { }) }
             composable("postsVer/{id}", arguments = listOf(
                 navArgument("id") { type = NavType.IntType })
             ) {
