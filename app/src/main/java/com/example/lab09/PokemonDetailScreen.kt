@@ -116,7 +116,7 @@ fun ScreenPokemonDetalle(id: Int, onVolver: () -> Unit) {
 
 @Composable
 private fun DetallePokemon(pokemon: PokemonDetail, onVolver: () -> Unit) {
-    val colorPrincipal = Color(0xFF546E7A)
+    val colorPrincipal = colorDeTipo(pokemon.types.firstOrNull()?.type?.name ?: "")
 
     Column(
         modifier = Modifier
