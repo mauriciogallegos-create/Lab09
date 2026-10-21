@@ -16,10 +16,14 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -85,6 +89,7 @@ fun ScreenPokedex(onPokemonClick: (Int) -> Unit) {
     var cargando by remember { mutableStateOf(true) }
     var hayError by remember { mutableStateOf(false) }
     var intento by remember { mutableIntStateOf(0) }
+    var busqueda by remember { mutableStateOf("") }
 
     LaunchedEffect(intento) {
         cargando = true
@@ -98,28 +103,51 @@ fun ScreenPokedex(onPokemonClick: (Int) -> Unit) {
         cargando = false
     }
 
-    when {
-        cargando -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-        hayError -> Column(
-            Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("No se pudo cargar la Pokédex")
-            Spacer(Modifier.height(12.dp))
-            Button(onClick = { intento++ }) { Text("Reintentar") }
-        }
-        else -> LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(pokemones, key = { it.id }) { pokemon ->
-                TarjetaPokemon(pokemon) { onPokemonClick(pokemon.id) }
+    // Filtra por nombre o por número
+    val texto = busqueda.trim()
+    val filtrados = if (texto.isEmpty()) pokemones else pokemones.filter {
+        it.name.contains(texto, ignoreCase = true) || it.id.toString() == texto
+    }
+
+    Column(Modifier.fillMaxSize()) {
+        OutlinedTextField(
+            value = busqueda,
+            onValueChange = { busqueda = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            placeholder = { Text("Buscar Pokémon por nombre o número") },
+            leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = "Buscar") },
+            singleLine = true,
+            shape = RoundedCornerShape(24.dp)
+        )
+
+        when {
+            cargando -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            hayError -> Column(
+                Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("No se pudo cargar la Pokédex")
+                Spacer(Modifier.height(12.dp))
+                Button(onClick = { intento++ }) { Text("Reintentar") }
+            }
+            filtrados.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("No se encontró ningún Pokémon")
+            }
+            else -> LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(filtrados, key = { it.id }) { pokemon ->
+                    TarjetaPokemon(pokemon) { onPokemonClick(pokemon.id) }
+                }
             }
         }
     }
