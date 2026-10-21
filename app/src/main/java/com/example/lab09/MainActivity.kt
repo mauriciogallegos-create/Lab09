@@ -141,7 +141,17 @@ fun Contenido(
         ) {
             composable("inicio") { ScreenInicio() }
             composable("posts") { ScreenPosts(navController, servicio) }
-            composable("pokedex") { ScreenPokedex(onPokemonClick = { }) }
+            composable("pokedex") {
+                ScreenPokedex(onPokemonClick = { id -> navController.navigate("pokemonVer/$id") })
+            }
+            composable("pokemonVer/{id}", arguments = listOf(
+                navArgument("id") { type = NavType.IntType })
+            ) {
+                ScreenPokemonDetalle(
+                    id = it.arguments!!.getInt("id"),
+                    onVolver = { navController.popBackStack() }
+                )
+            }
             composable("postsVer/{id}", arguments = listOf(
                 navArgument("id") { type = NavType.IntType })
             ) {
